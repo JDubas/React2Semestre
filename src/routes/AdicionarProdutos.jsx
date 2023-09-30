@@ -4,6 +4,7 @@ import { useState , useEffect } from 'react'; // Adicionar hook de efeito
 import { useNavigate , useParams} from 'react-router-dom'; // adicionar o hook para usar os parametros da url
 import { ListaProdutos } from '../Components/ListaProdutos';
 
+
 export default function AdicionarProdutos() {
     // Código adicional para incluir a parte de trazer os dados do produto ao add um novo
     // id fornecido na URL (editar/produtos/:id). 
