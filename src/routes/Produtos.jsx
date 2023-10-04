@@ -5,23 +5,43 @@ import { AiFillEdit as Editar } from "react-icons/ai";
 import { MdDeleteForever as Excluir } from "react-icons/md";
 import { FaPlus as IconeAdicionar } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import ModelInserir from "../Components/ModalInserir/ModalInserir";
+import ModalAction from "../Components/ModalAction/ModalAction";
 
 export default function Produtos() {
     document.title = "Lista de Produtos";
 
-    const [produtos, setProdutos] = useState([{}])
-    const [open, setOpen] = useState(false)
+    const [produtos, setProdutos] = useState([{}]);
+    const [open, setOpen] = useState(false);
+    const [id, setId] = useState(0);
+
+
+
+
+
+
+
+
+
+
 
     useEffect(()=>{
 
         if (!open) {
             carregarProdutos()
         }
-    },[open]);
+    }, [open]);
+
+    const handleUpdate = (id) => {
+        setId(id);
+        setOpen(true);
+      };
+
+      const handleadd = () => {
+        setId(0);
+        setOpen(true);
+      };
 
 const deletar = (id) => {
-    console.log(id);
     fetch(`http://localhost:5000/produtos/${id}`,{
         method: "DELETE",
         headers:{
@@ -30,22 +50,35 @@ const deletar = (id) => {
     })
     carregarProdutos();
 
-}
-const carregarProdutos = () => {
-    fetch("http://localhost:5000/produtos",{
-        method: "GET",
-        headers:{
-            "Content-Type": "application/json"
-        }})
-        .then((response)=> response.json())
-        .then((listaProdutos)=>{
-            setProdutos(listaProdutos);
-        })
-}
+    }
+
+
+    const carregarProdutos = () => {
+        fetch("http://localhost:5000/produtos",{
+            method: "GET",
+            headers:{
+                "Content-Type": "application/json"
+            }})
+            .then((response)=> response.json())
+            .then((listaProdutos)=>{
+                setProdutos(listaProdutos);
+            })
+    }
+
+
     return (
         <div>
             <h1>Produtos</h1>
-           {open ? <ModelInserir open={open} setOpen={setOpen}/> : ""}
+            {open ? (
+        <ModalAction
+          open={open}
+          setOpen={setOpen}
+          idEditar={id}
+          setId={setId}
+        />
+      ) : (
+        ""
+      )}
 {/* <button onClick={()=> setOpen(true)}>Open - Modal</button> */}
             <table className={styles.table}>
                 <thead>
@@ -66,14 +99,12 @@ const carregarProdutos = () => {
                             <td>{produto.nome}</td>
                             <td>{produto.preco}</td>
                             <td style={{ textAlign: "center" }}>
-                                <Link to={`/editar/produtos/${produto.id}`}>
-                                <Editar /></Link></td>
+                                <Link onClick={() => handleUpdate(produto.id)}>
+                                <Editar />
+                                </Link></td>
                             <td style={{ textAlign: "center" }}>
                                 <Link onClick={() => {deletar(produto.id)}}>
                                 <Excluir /></Link></td>
-                            {/* <td style={{ textAlign: "center" }}>
-                                <Link to={`/adicionar/produtos/${produto.id}`}>
-                                <IconeAdicionar/></Link></td> */}
                         </tr>
                     ))}
                 </tbody>
@@ -83,7 +114,7 @@ const carregarProdutos = () => {
                             PRODUTOS
                         </td>
                         <td colSpan={2} style={{ textAlign: "center" }} >
-                            <Link onClick={()=> setOpen(true)}>
+                            <Link onClick={()=> handleadd()}>
                                 <IconeAdicionar />
                             </Link>
                         </td>
